@@ -1,4 +1,4 @@
-// +build darwin ios
+// +build darwin
 
 package keychain
 
@@ -212,7 +212,7 @@ func NewItem() Item {
 	return Item{make(map[string]interface{})}
 }
 
-// NewGenericPassword creates a generic password item. This is a convenience method.
+// NewGenericPassword creates a generic password item with the default keychain. This is a convenience method.
 func NewGenericPassword(service string, account string, label string, data []byte, accessGroup string) Item {
 	item := NewItem()
 	item.SetSecClass(SecClassGenericPassword)
@@ -224,7 +224,7 @@ func NewGenericPassword(service string, account string, label string, data []byt
 	return item
 }
 
-// AddItem adds a Item
+// AddItem adds a Item to a Keychain
 func AddItem(item Item) error {
 	cfDict, err := ConvertMapToCFDictionary(item.attr)
 	if err != nil {
@@ -413,10 +413,4 @@ func GetGenericPassword(service string, account string, label string, accessGrou
 		return results[0].Data, nil
 	}
 	return nil, nil
-}
-
-// DeleteItemRef deletes a keychain item reference.
-func DeleteItemRef(ref C.CFTypeRef) error {
-	errCode := C.SecKeychainItemDelete(C.SecKeychainItemRef(ref))
-	return checkError(errCode)
 }
